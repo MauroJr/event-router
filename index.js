@@ -16,7 +16,7 @@ module.exports = toFactory(EventRouter);
  * @api private
  */
 function EventRouter(spec) {
-    let regex, str, delimeter;
+    let regex, str, delimeter, _routeString;
     
     const listKeys  = [];
     
@@ -25,10 +25,9 @@ function EventRouter(spec) {
     /**
      * PUBLIC API
      */
-    return {
-        toArray,
-        toObject
-    };
+    parse.toArray = toArray;
+    parse.toObject = toObject;
+    return parse;
     
     function init() {
         if (toString.call(spec) === '[object Object]') {
@@ -45,19 +44,28 @@ function EventRouter(spec) {
         regex = createRegex();
     }
     
+    function parse(str) {
+        _routeString = str || _routeString;
+        return regex.test(_routeString);
+    }
+    
     function toArray(routeString) {
-        return regex.exec(routeString).slice(1);
+        if (parse(routeString)) return regex.exec(_routeString).slice(1);
+        return false;
     }
     
     function toObject(routeString) {
         const resultObj = {},
               resultList = toArray(routeString);
         
-        listKeys.forEach(function (key, i) {
-            resultObj[key] = resultList[i];
-        });
-        
-        return resultObj;
+        if (resultList) {
+            listKeys.forEach(function (key, i) {
+                resultObj[key] = resultList[i];
+            });
+            
+            return resultObj;
+        }
+        return false;
     }
     
     function createRegex() {
