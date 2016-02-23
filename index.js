@@ -6,7 +6,7 @@ const toFactory     = require('tofactory'),
       paramError    = new Error('"route" parameter must be a string.'),
       toString      = Object.prototype.toString;
 
-module.exports = toFactory(Parser);
+module.exports = toFactory(EventRouter);
 
 /**
  * Parse route string to a `Array` or 'Object'.
@@ -15,7 +15,7 @@ module.exports = toFactory(Parser);
  * @return {RegExp}
  * @api private
  */
-function Parser(spec) {
+function EventRouter(spec) {
     let regex, str, delimeter;
     
     const listKeys  = [];
