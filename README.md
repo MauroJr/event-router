@@ -63,6 +63,15 @@ Parse route strings for event emitter
     
     route.toArray();
     // [ 'johndoe', 'insert', '32' ]
+    
+    // or you can also change the sections "delimeter"
+    router = EventRouter.create({
+    	route: '*/insert|update/*',
+    	delimeter: '/'
+    });
+    
+    route = router('johndoe/insert/32');
+    // true
 ```
 
 
