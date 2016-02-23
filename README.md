@@ -2,26 +2,6 @@
 
 Parse route strings for event emitter
 
-**Problem**
-
-```javascript
-	var db = require('../../../../lib/some-module');
-```
-
-**Solution**
-
-```javascript
-    // do this just one time in the root file (i.e. index.js)
-	require('local-module')('lib', 'utils');
-	
-	// then in any other file just do it.
-	var lib = require('localModule');
-	// them all your local modules inside in this diretories ('lib' or 'utils')
-	// is avaliable in the following way
-	var someModule = lib.some_module
-```
-
-
 ## Installation
 
 	npm install event-router --save
