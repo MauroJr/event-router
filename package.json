@@ -24,7 +24,6 @@
   "homepage": "https://github.com/MauroJr/event-router#readme",
   "dependencies": {
     "escape-regex": "^1.0.7",
-    "local-module": "^1.0.2",
     "tofactory": "^1.1.0"
   }
 }
