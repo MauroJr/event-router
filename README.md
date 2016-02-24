@@ -18,50 +18,16 @@ Parse route strings for event emitter
     // you can use "named" route sections
     router = EventRouter.create('{user}:{action=insert|update}:{id}');
     
-    route = router('johndoe:insert:34');
-    // true
-    
-    route.toObject();
+    router.parse('johndoe:insert:34');
     // { user: 'johndoe', action: 'insert', id: '32' }
     
-    route.toArray();
-    // [ 'johndoe', 'insert', '32' ]
-    
-    route('johndoe:remove:32');
-    // false
-    
-    route.toObject();
-    // false
-    
-    route.toArray();
-    // false
-    
-    route('janedoe:insert:33');
-    // true
-    
-    route.toObject();
-    // { user: 'janedoe', action: 'insert', id: '33' }
-    
-    route.toArray();
-    // [ 'janedoe', 'insert', '33' ]
-    
-    // you can even call toArray or toObject directly with the route string parameter
-    route.toArray('janedoe:update:33');
-    // [ 'janedoe', 'update', '33' ]
-    
-    route.toArray('janedoe:delete:33');
+    route.parse('johndoe:remove:32');
     // false
     
     // or you can use "unnamed" route sections
     router = EventRouter.create('*:insert|update:*');
     
-    route = router('johndoe:insert:32');
-    // true
-    
-    route.toObject();
-    // { '1': 'johndoe', '2': 'insert', '3': '32' }
-    
-    route.toArray();
+    route = router.parse('johndoe:insert:32');
     // [ 'johndoe', 'insert', '32' ]
     
     // or you can also change the sections "delimeter"
@@ -70,8 +36,8 @@ Parse route strings for event emitter
     	delimeter: '/'
     });
     
-    route = router('johndoe/insert/32');
-    // true
+    route = router.parse('johndoe/insert/32');
+    // [ 'johndoe', 'insert', '32' ]
 ```
 
 
