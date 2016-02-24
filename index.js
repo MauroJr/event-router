@@ -25,8 +25,9 @@ function EventRouter(spec) {
     /**
      * PUBLIC API
      */
-    parse.toArray = toArray;
-    parse.toObject = toObject;
+    parse.toArray           = toArray;
+    parse.toObject          = toObject;
+    parse.hasNamedSections  = hasNamedSections;
     return parse;
     
     function init() {
@@ -52,6 +53,10 @@ function EventRouter(spec) {
     function toArray(routeString) {
         if (parse(routeString)) return regex.exec(_routeString).slice(1);
         return false;
+    }
+    
+    function hasNamedSections() {
+        return bracketsRegex.test(_routeString);
     }
     
     function toObject(routeString) {
