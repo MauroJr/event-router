@@ -16,7 +16,8 @@ module.exports = toFactory(EventRouter);
  * @api private
  */
 function EventRouter(spec) {
-    let regex, str, delimeter, _routeString;
+    let hasNamedSections = false, 
+        regex, str, delimeter;
     
     const listKeys  = [];
     
@@ -25,12 +26,18 @@ function EventRouter(spec) {
     /**
      * PUBLIC API
      */
-    parse.toArray           = toArray;
-    parse.toObject          = toObject;
-    parse.hasNamedSections  = hasNamedSections;
-    return parse;
+    return function parse(routeString) {
+        if (regex.test(routeString)) {
+            if (hasNamedSections) {
+                return resultObject(routeString);
+            }
+            return resultArray(routeString);
+        }
+        return false;
+    };
     
     function init() {
+        
         if (toString.call(spec) === '[object Object]') {
             str = spec.route;
             delimeter = spec.delimeter;
@@ -42,35 +49,22 @@ function EventRouter(spec) {
         
         delimeter = delimeter || ':';
         
-        regex = createRegex();
+        createRegex();
     }
     
-    function parse(str) {
-        _routeString = str || _routeString;
-        return regex.test(_routeString);
+    function resultArray(routeString) {
+        return regex.exec(routeString).slice(1);
     }
     
-    function toArray(routeString) {
-        if (parse(routeString)) return regex.exec(_routeString).slice(1);
-        return false;
-    }
-    
-    function hasNamedSections() {
-        return bracketsRegex.test(_routeString);
-    }
-    
-    function toObject(routeString) {
-        const resultObj = {},
-              resultList = toArray(routeString);
+    function resultObject(routeString) {
+        const resultObj     = {},
+              resultList    = resultArray(routeString);
         
-        if (resultList) {
-            listKeys.forEach(function (key, i) {
-                resultObj[key] = resultList[i];
-            });
-            
-            return resultObj;
-        }
-        return false;
+        listKeys.forEach(function (key, i) {
+            resultObj[key] = resultList[i];
+        });
+        
+        return resultObj;
     }
     
     function createRegex() {
@@ -85,6 +79,8 @@ function EventRouter(spec) {
             
             if (bracketsRegex.test(s)) {
                 let route   = s.split('=');
+                
+                hasNamedSections = true;
                 
                 listKeys[sidx] = route[0].trim().replace(brackets, '');
                 opts = route[1] ? route[1].trim().replace(brackets, '') : '*';    
@@ -105,6 +101,6 @@ function EventRouter(spec) {
             optsList[i] = opts; 
         });
         
-        return new RegExp(`^${optsList.join(delimeter)}$`);
+        regex = new RegExp(`^${optsList.join(delimeter)}$`);
     }
 }
