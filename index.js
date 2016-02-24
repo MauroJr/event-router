@@ -26,14 +26,13 @@ function EventRouter(spec) {
     /**
      * PUBLIC API
      */
-    return function parse(routeString) {
-        if (regex.test(routeString)) {
-            if (hasNamedSections) {
-                return resultObject(routeString);
-            }
-            return resultArray(routeString);
-        }
-        return false;
+    if (hasNamedSections) {
+        return {
+            parse: resultObject
+        };
+    }
+    return {
+        parse: resultArray
     };
     
     function init() {
@@ -52,13 +51,15 @@ function EventRouter(spec) {
         createRegex();
     }
     
-    function resultArray(routeString) {
-        return regex.exec(routeString).slice(1);
+    function resultArray(route) {
+        return regex.test(route) ? regex.exec(route).slice(1) : false;
     }
     
-    function resultObject(routeString) {
-        const resultObj     = {},
-              resultList    = resultArray(routeString);
+    function resultObject(route) {
+        const resultObj     = Object.create(null),
+              resultList    = resultArray(route);
+        
+        if (resultList === false) return false;
         
         listKeys.forEach(function (key, i) {
             resultObj[key] = resultList[i];
