@@ -1,0 +1,9 @@
+files:
+
+    - index.js
+
+packageJson: package.json
+
+articles:
+
+    - Overview: README.md
