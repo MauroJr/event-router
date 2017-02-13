@@ -1,12 +1,16 @@
 'use strict';
-const toFactory     = require('tofactory'),
-      escapeRegex   = require('escape-regex'),
-      bracketsRegex = /^\{.*\}$/,
-      brackets      = /[\{\}]/g,
-      paramError    = new Error('"route" parameter must be a string.'),
-      toString      = Object.prototype.toString;
 
-module.exports = toFactory(EventRouter);
+const toFactory     = require('tofactory'),
+const escapeRegex   = require('escape-regex'),
+const bracketsRegex = /^\{.*\}$/,
+const brackets      = /[\{\}]/g,
+const paramError    = new Error('"route" parameter must be a string.'),
+const toString      = Object.prototype.toString;
+
+EventRouter.create = () => EventRouter();
+
+module.exports = Object.freeze(EventRouter);
+
 
 /**
  * Parse route string to a `Array` or 'Object'.
@@ -15,41 +19,21 @@ module.exports = toFactory(EventRouter);
  * @return {RegExp}
  * @api private
  */
-function EventRouter(spec) {
+function EventRouter(route = '') {
+    const listKeys  = [];
+
     let hasNamedSections = false, 
         regex, str, delimeter;
     
-    const listKeys  = [];
-    
-    init();
+    createRegex();
+
     
     /**
      * PUBLIC API
      */
-    if (hasNamedSections) {
-        return {
-            parse: resultObject
-        };
-    }
-    return {
-        parse: resultArray
-    };
-    
-    function init() {
-        
-        if (toString.call(spec) === '[object Object]') {
-            str = spec.route;
-            delimeter = spec.delimeter;
-        } else {
-            str = spec;
-        }
-        
-        if (typeof str !== 'string' || str instanceof RegExp) throw paramError;
-        
-        delimeter = delimeter || ':';
-        
-        createRegex();
-    }
+    return Object.freeze({
+        parse: hasNamedSections ? resultObject : resultArray
+    });
     
     function resultArray(route) {
         return regex.test(route) ? regex.exec(route).slice(1) : false;
@@ -69,10 +53,14 @@ function EventRouter(spec) {
     }
     
     function createRegex() {
-        const optsList  = [],
-              listStr   = [];
+        const optsList = [];
+        const listStr = [];
+
+        str.split(delimeter)
+            .map((s => s.trim())
+
         
-        str.split(delimeter).forEach(function (s, sidx) {
+        str.split(delimeter).forEach((s, sidx) => {
             let opts;
             
             s = s.trim();
